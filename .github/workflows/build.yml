@@ -42,7 +42,7 @@ jobs:
         $passwordEncrypted = ConvertTo-SecureString $password -AsPlainText -Force
         New-LocalUser -Name $username -Password $passwordEncrypted
 
-    - env
+    - env:
       run: |
         set -eux
 
