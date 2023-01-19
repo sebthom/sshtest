@@ -83,7 +83,7 @@ jobs:
 
         cat /etc/sshd_config
 
-        /usr/bin/sshd -ddd &
+        /usr/sbin/sshd -ddd &
         sleep 2
 
         ssh ${{ env.TEST_SSH_USER }}@${{ env.TEST_SSH_HOST }} \
