@@ -28,15 +28,20 @@ jobs:
     - name: "Cache: Cywgin Repository"
       uses: actions/cache@v3
       with:
-        path: "${{ runner.tool_cache }}/cygwin-packages"
+        path: "C:/cygwin-packages"
         # https://github.com/actions/cache/issues/342#issuecomment-673371329
         key: ${{ runner.os }}-cygwin-${{ github.run_id }}
         restore-keys: |
           ${{ runner.os }}-cygwin-
 
-    - uses: cygwin/cygwin-install-action@master
+    - name: "Install: Cygwin"
+      uses: cygwin/cygwin-install-action@master
       with:
         packages: openssh
+        
+    - name: "Create Windows testuser"
+      run: |
+        net user testuser MySuperPassword /add
 
     - env:
         CYGWIN: "binmode ntsec"
