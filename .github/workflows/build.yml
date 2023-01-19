@@ -57,6 +57,8 @@ jobs:
         PasswordAuthentication yes
         PermitEmptyPasswords no
         EOF
+        cat /etc/sshd_config
+        dos2unix /etc/sshd_config
 
         /usr/bin/sshd -dd &
 
