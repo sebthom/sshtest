@@ -43,5 +43,4 @@ jobs:
         CYGWIN: "binmode ntsec"
       run: |
         echo $OSTYPE
-        bash --version
-        bash -c "cygrunsrv -h"
+        cygrunsrv -h
