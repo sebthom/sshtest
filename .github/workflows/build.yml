@@ -30,20 +30,7 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - name: Remove custom tar binaries
-      shell: bash
-      run: |
-        # https://github.com/actions/cache/issues/1073
-        rm -rfv /usr/bin/tar "/cygdrive/c/Program Files/Git/usr/bin/tar.exe"
-        
-    - name: "Create Windows testuser"
-      shell: powershell
-      run: |
-        $username = "${{ env.TEST_SSH_USER }}"
-        $password = "${{ env.TEST_SSH_PW }}"
-        $passwordEncrypted = ConvertTo-SecureString $password -AsPlainText -Force
-        New-LocalUser -Name $username -Password $passwordEncrypted
-      
+
     - name: "Cache: Cywgin Repository"
       uses: actions/cache@v3
       with:
@@ -58,10 +45,21 @@ jobs:
       with:
         packages: expect openssh
 
+    - name: "Create Windows testuser for SSH"
+      shell: powershell
+      run: |
+        $username = "${{ env.TEST_SSH_USER }}"
+        $password = "${{ env.TEST_SSH_PW }}"
+        $passwordEncrypted = ConvertTo-SecureString $password -AsPlainText -Force
+        New-LocalUser -Name $username -Password $passwordEncrypted
+
     - env:
         CYGWIN: "binmode ntsec"
       run: |
-        echo $OSTYPE
+        set -eux
+
+        chmod 400 $(pwd)/test/*
+
         ssh-keygen -A # generate host keys
         cat <<EOF > /etc/sshd_config
         ListenAddress 127.0.0.1
@@ -69,11 +67,18 @@ jobs:
         PermitRootLogin no
         StrictModes no
         PubkeyAuthentication yes
-        AuthorizedKeysFile .ssh/authorized_keys
+        AuthorizedKeysFile $(pwd)/test/id_pub.txt
         IgnoreUserKnownHosts yes
         PasswordAuthentication yes
         PermitEmptyPasswords no
         EOF
-        #sshd -4 -p 2222
-        #ssh localhost -P 2222
 
+        sshd -dd &
+
+        ssh testuser@127.0.0.1 -i $(pwd)/test/id_key.txt -P 2222 -c "whoami"
+
+    - name: Remove cygwin/msys2 tar binaries
+      shell: bash
+      run: |
+        # https://github.com/actions/cache/issues/1073
+        rm -rfv /usr/bin/tar "/cygdrive/c/Program Files/Git/usr/bin/tar.exe"
