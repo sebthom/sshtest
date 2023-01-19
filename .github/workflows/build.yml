@@ -42,7 +42,9 @@ jobs:
         $passwordEncrypted = ConvertTo-SecureString $password -AsPlainText -Force
         New-LocalUser -Name $username -Password $passwordEncrypted
 
-    - run: |
+    - env: 
+        MSYS: ntsec # seteuid 197611: Operation not permitted
+      run: |
         set -eux
 
         chmod 400 $(pwd)/test/*
