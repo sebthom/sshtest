@@ -58,6 +58,6 @@ jobs:
         PermitEmptyPasswords no
         EOF
 
-        /usr/sbin/sshd -dd &
+        /usr/bin/sshd -dd &
 
         ssh testuser@127.0.0.1 -i $(pwd)/test/id_key.txt -P 2222 -c "whoami"
