@@ -32,7 +32,7 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - name: "Create Windows testuser for SSH"
       shell: powershell
@@ -42,7 +42,9 @@ jobs:
         $passwordEncrypted = ConvertTo-SecureString $password -AsPlainText -Force
         New-LocalUser -Name $username -Password $passwordEncrypted
 
-    - run: |
+    - env: 
+        MSYS: "binmode ntsec" # seteuid 197611: Operation not permitted
+      run: |
         set -eux
 
         chmod 400 $(pwd)/test/*
