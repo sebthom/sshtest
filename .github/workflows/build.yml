@@ -28,7 +28,7 @@ jobs:
     - name: "Cache: Cywgin Repository"
       uses: actions/cache@v3
       with:
-        path: "C:/cygwin-packages"
+        path: "${{ runner.tool_cache }}/cygwin-packages"
         # https://github.com/actions/cache/issues/342#issuecomment-673371329
         key: ${{ runner.os }}-cygwin-${{ github.run_id }}
         restore-keys: |
@@ -36,13 +36,11 @@ jobs:
 
     - uses: cygwin/cygwin-install-action@master
       with:
-        packages: openssh openssl
+        packages: openssh
 
     - env:
         CYGWIN: "binmode ntsec"
       run: |
         echo $OSTYPE
-        echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCwPzPT7khwg+n+MbbtHrUx9xmHoTb2Q6pMKmdCpLkB4h1TqedQqNUoCUL989WnvY7N3u/j/HTSDI9J9EANeHZ/5WYz2QVdNqcMpKAvKXa+s8jGjz7JOMGJ+bM0f69XAkAILXRdSXyAH2KNsgiDzLzVPpq8B1wq+jZG3crEF8pmkleXa56ApxisJ1T0yGQEz7QcbOaBS1YKJKz4jB0npGlBX8/aey8RRPUM7Ww3zYGnGqynNdq1HxwMO1Hz9jCQvAySDn1TtGqUTViRIhAxs4KSJlEHyynf2E/VRsz+uEs8B4MS/BidFlhc4xb2PAw6fWiHr5n2E72xOm9bcVvfe3KZ" > ssh_key.pub
-        chmod 400 ssh_key.pub
-        eval $(ssh-agent -s) && ssh-add ssh_key.pub
-        sshd -D -p 22 -h "SHA256:y8VgwkQxUYGz4DMkbFSpa9QPDfINWoMlXw6r4redWZc" -o User=mytestuser -o PermitRootLogin=false
+        ssh-keygen -A # generate host keys
+        #sshd -D -p 2222 -o User=mytestuser -o PermitRootLogin=false
