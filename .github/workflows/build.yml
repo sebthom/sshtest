@@ -24,6 +24,14 @@ jobs:
     runs-on: windows-latest
 
     steps:
+
+    - name: "Create Windows testuser"
+      shell: powershell
+      run: |
+        $username = "testuser"
+        $password = "P@ssw0rd"
+        $passwordEncrypted = ConvertTo-SecureString $password -AsPlainText -Force
+        New-LocalUser -Name $username -Password $passwordEncrypted
       
     - name: "Cache: Cywgin Repository"
       uses: actions/cache@v3
@@ -39,14 +47,6 @@ jobs:
       with:
         packages: openssh
         
-    - name: "Create Windows testuser"
-      shell: powershell
-      run:
-        $username = "testuser"
-        $password = "P@ssw0rd"
-        $passwordEncrypted = ConvertTo-SecureString $password -AsPlainText -Force
-        New-LocalUser -Name $username -Password $passwordEncrypted
-      
     - env:
         CYGWIN: "binmode ntsec"
       run: |
