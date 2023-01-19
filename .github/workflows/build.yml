@@ -33,6 +33,22 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    
+    - name: "Cache: Cywgin Repository"
+      uses: actions/cache@v3
+      with:
+        path: |
+          "C:/cygwin"
+          "C:/cygwin-packages"
+        # https://github.com/actions/cache/issues/342#issuecomment-673371329
+        key: ${{ runner.os }}-cygwin-${{ github.run_id }}
+        restore-keys: |
+          ${{ runner.os }}-cygwin-
+
+    - name: "Install: Cygwin"
+      uses: cygwin/cygwin-install-action@master
+      with:
+        packages: expect openssh
 
     - name: "Create Windows testuser for SSH"
       shell: powershell
@@ -43,14 +59,16 @@ jobs:
         New-LocalUser -Name $username -Password $passwordEncrypted
 
     - env: 
-        MSYS: ntsec # seteuid 197611: Operation not permitted
+        CYGWIN: "binmode ntsec"
+        CYGWIN_NOWINPATH: "1" # prevent sshd.exe: *** fatal error - cygheap base mismatch detected
+        SHELLOPTS: "igncr"
       run: |
         set -eux
 
         chmod 400 $(pwd)/test/*
 
         ssh-keygen -A # generate host keys
-        cat <<EOF > /etc/ssh/sshd_config
+        cat <<EOF > /etc/sshd_config
         ListenAddress ${{ env.TEST_SSH_HOST }}
         Port ${{ env.TEST_SSH_PORT }}
         PermitRootLogin no
@@ -58,7 +76,6 @@ jobs:
         PubkeyAuthentication yes
         IgnoreUserKnownHosts yes
         PasswordAuthentication yes
-        UsePrivilegeSeparation no # seteuid 197611: Operation not permitted
         PermitEmptyPasswords no
         match User ${{ env.TEST_SSH_USER }}
             AuthorizedKeysFile $(pwd)/${{ env.TEST_SSH_PUB_FILE }}
@@ -74,3 +91,9 @@ jobs:
           -i $(pwd)/${{ env.TEST_SSH_KEY_FILE }} \
           -p ${{ env.TEST_SSH_PORT }} \
           "whoami"
+
+    - name: Remove cygwin/msys2 tar binaries
+      shell: bash
+      run: |
+        # https://github.com/actions/cache/issues/1073
+        rm -rfv /usr/bin/tar "/cygdrive/c/Program Files/Git/usr/bin/tar.exe"
