@@ -15,6 +15,10 @@ on:
   workflow_dispatch:
     # https://github.blog/changelog/2020-07-06-github-actions-manual-triggers-with-workflow_dispatch/
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
   build:
     runs-on: windows-latest
@@ -25,7 +29,7 @@ jobs:
     - name: "Cache: Cywgin Repository"
       uses: actions/cache@v3
       with:
-        path: "C:\\cygwin-packages"
+        path: "C:/cygwin-packages"
         # https://github.com/actions/cache/issues/342#issuecomment-673371329
         key: ${{ runner.os }}-cygwin-${{ github.run_id }}
         restore-keys: |
@@ -35,8 +39,9 @@ jobs:
       with:
         packages: openssh openssl
 
-    - shell: cmd
+    - env:
+        CYGWIN: "binmode ntsec"
       run: |
-        where bash
+        echo $OSTYPE
         bash --version
-        bash -c "echo $OSTYPE"
+        bash -c "cygrunsrv -h"
