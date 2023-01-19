@@ -41,7 +41,7 @@ jobs:
         
     - name: "Create Windows testuser"
       run: |
-        net user testuser MySuperPassword /add
+        NET USER "testuser" "MySuperPassword" /ADD
 
     - env:
         CYGWIN: "binmode ntsec"
