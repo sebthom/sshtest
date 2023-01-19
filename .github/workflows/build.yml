@@ -58,6 +58,7 @@ jobs:
 
     - env:
         CYGWIN: "binmode ntsec"
+        CYGWIN_NOWINPATH: "1"
         SHELLOPTS: "igncr"
       run: |
         set -eux
