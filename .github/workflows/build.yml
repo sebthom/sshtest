@@ -65,4 +65,9 @@ jobs:
 
         /usr/bin/sshd -dd &
         sleep 2
-        ssh ${{ env.TEST_SSH_USER }}@${{ env.TEST_SSH_HOST }} -i $(pwd)/${{ env.TEST_SSH_KEY_FILE }} -p ${{ env.TEST_SSH_PORT }} "whoami"
+
+        ssh ${{ env.TEST_SSH_USER }}@${{ env.TEST_SSH_HOST }} \
+          -o StrictHostKeyChecking=accept-new \
+          -i $(pwd)/${{ env.TEST_SSH_KEY_FILE }} \
+          -p ${{ env.TEST_SSH_PORT }} \
+          "whoami"
