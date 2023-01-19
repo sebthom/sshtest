@@ -46,7 +46,7 @@ jobs:
         chmod 400 $(pwd)/test/*
 
         ssh-keygen -A # generate host keys
-        cat <<EOF > /etc/sshd_config
+        cat <<EOF > /etc/ssh/sshd_config
         ListenAddress 127.0.0.1
         Port 2222
         PermitRootLogin no
@@ -57,8 +57,6 @@ jobs:
         PasswordAuthentication yes
         PermitEmptyPasswords no
         EOF
-        cat /etc/sshd_config
-        dos2unix /etc/sshd_config
 
         /usr/bin/sshd -dd &
 
