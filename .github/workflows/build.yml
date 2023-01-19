@@ -48,7 +48,7 @@ jobs:
     - name: "Install: Cygwin"
       uses: cygwin/cygwin-install-action@master
       with:
-        packages: expect openssh
+        packages: expect openssh putty
 
     - name: "Create Windows testuser for SSH"
       shell: powershell
@@ -86,9 +86,9 @@ jobs:
         /usr/sbin/sshd -ddd &
         sleep 2
 
-        ssh ${{ env.TEST_SSH_USER }}@${{ env.TEST_SSH_HOST }} \
-          -o StrictHostKeyChecking=accept-new \
-          -i $(pwd)/${{ env.TEST_SSH_KEY_FILE }} \
+        plink ${{ env.TEST_SSH_USER }}@${{ env.TEST_SSH_HOST }} \
+          -auto-store-sshkey \
+          -pw ${{ env.TEST_SSH_PW }} \
           -p ${{ env.TEST_SSH_PORT }} \
           "whoami"
 
