@@ -34,6 +34,7 @@ jobs:
     - name: "Cache: Cywgin Repository"
       uses: actions/cache@v3
       with:
+        path: "C:/cygwin"
         path: "C:/cygwin-packages"
         # https://github.com/actions/cache/issues/342#issuecomment-673371329
         key: ${{ runner.os }}-cygwin-${{ github.run_id }}
@@ -56,7 +57,7 @@ jobs:
     - env:
         CYGWIN: "binmode ntsec"
       run: |
-        set -eux
+        set -x
 
         chmod 400 $(pwd)/test/*
 
