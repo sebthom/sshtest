@@ -40,9 +40,13 @@ jobs:
         packages: openssh
         
     - name: "Create Windows testuser"
-      run: |
-        NET USER "testuser" "MySuperPassword" /ADD
-
+      shell: powershell
+      run:
+        $username = "testuser"
+        $password = "P@ssw0rd"
+        $passwordEncrypted = ConvertTo-SecureString $password -AsPlainText -Force
+        New-LocalUser -Name $username -Password $passwordEncrypted
+      
     - env:
         CYGWIN: "binmode ntsec"
       run: |
