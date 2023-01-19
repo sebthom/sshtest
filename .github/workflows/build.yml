@@ -78,4 +78,4 @@ jobs:
         # https://github.com/actions/cache/issues/1073
         rm -rfv \
           /usr/bin/tar \
-          /cygdrive/c/Program Files/Git/usr/bin/tar.exe
+          "/cygdrive/c/Program Files/Git/usr/bin/tar.exe"
