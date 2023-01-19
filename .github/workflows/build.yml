@@ -43,7 +43,7 @@ jobs:
         New-LocalUser -Name $username -Password $passwordEncrypted
 
     - env: 
-        MSYS: "binmode ntsec" # seteuid 197611: Operation not permitted
+        MSYS: ntsec # seteuid 197611: Operation not permitted
       run: |
         set -eux
 
@@ -58,6 +58,7 @@ jobs:
         PubkeyAuthentication yes
         IgnoreUserKnownHosts yes
         PasswordAuthentication yes
+        #UsePrivilegeSeparation no # seteuid 197611: Operation not permitted
         PermitEmptyPasswords no
         match User ${{ env.TEST_SSH_USER }}
             AuthorizedKeysFile $(pwd)/${{ env.TEST_SSH_PUB_FILE }}u
