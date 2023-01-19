@@ -54,7 +54,6 @@ jobs:
         PermitRootLogin no
         StrictModes no
         PubkeyAuthentication yes
-        AuthorizedKeysFile 
         IgnoreUserKnownHosts yes
         PasswordAuthentication yes
         PermitEmptyPasswords no
