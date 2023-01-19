@@ -1,0 +1,27 @@
+# https://docs.github.com/en/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions
+name: Build
+
+on:
+  push:
+    branches:
+    - '**'
+    tags-ignore:
+    - '**'
+    paths-ignore:
+    - '**/*.adoc'
+    - '**/*.md'
+    - '.github/*.yml'
+  pull_request:
+  workflow_dispatch:
+    # https://github.blog/changelog/2020-07-06-github-actions-manual-triggers-with-workflow_dispatch/
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - uses: cygwin/cygwin-install-action@master
+      with:
+        packages: openssh openssl
+    - run: |
+        echo $OSTYPE
