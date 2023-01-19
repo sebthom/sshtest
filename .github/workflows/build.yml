@@ -42,8 +42,7 @@ jobs:
         $passwordEncrypted = ConvertTo-SecureString $password -AsPlainText -Force
         New-LocalUser -Name $username -Password $passwordEncrypted
 
-    - env:
-      run: |
+    - run: |
         set -eux
 
         chmod 400 $(pwd)/test/*
