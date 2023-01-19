@@ -66,7 +66,7 @@ jobs:
 
         cat /etc/ssh/sshd_config
 
-        /usr/bin/sshd -dd &
+        /usr/bin/sshd -ddd &
         sleep 2
 
         ssh ${{ env.TEST_SSH_USER }}@${{ env.TEST_SSH_HOST }} \
