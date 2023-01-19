@@ -57,8 +57,9 @@ jobs:
 
     - env:
         CYGWIN: "binmode ntsec"
+        SHELLOPTS: "igncr"
       run: |
-        set -x
+        set -eux
 
         chmod 400 $(pwd)/test/*
 
