@@ -20,8 +20,23 @@ jobs:
     runs-on: windows-latest
 
     steps:
+   
+    
+    - name: "Cache: Cywgin Repository"
+      uses: actions/cache@v3
+      with:
+        path: "C:\\cygwin-packages"
+        # https://github.com/actions/cache/issues/342#issuecomment-673371329
+        key: ${{ runner.os }}-cygwin-${{ github.run_id }}
+        restore-keys: |
+          ${{ runner.os }}-cygwin-
+
     - uses: cygwin/cygwin-install-action@master
       with:
         packages: openssh openssl
-    - run: |
-        echo $OSTYPE
+
+    - shell: cmd
+      run: |
+        where bash
+        bash --version
+        bash -c "echo $OSTYPE"
