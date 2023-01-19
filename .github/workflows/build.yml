@@ -30,7 +30,12 @@ jobs:
     runs-on: windows-latest
 
     steps:
-
+    - name: Remove custom tar binaries
+      shell: bash
+      run: |
+        # https://github.com/actions/cache/issues/1073
+        rm -rfv /usr/bin/tar "/cygdrive/c/Program Files/Git/usr/bin/tar.exe"
+        
     - name: "Create Windows testuser"
       shell: powershell
       run: |
@@ -72,10 +77,3 @@ jobs:
         #sshd -4 -p 2222
         #ssh localhost -P 2222
 
-    - name: Remove custom tar binaries
-      shell: bash
-      run: |
-        # https://github.com/actions/cache/issues/1073
-        rm -rfv \
-          /usr/bin/tar \
-          "/cygdrive/c/Program Files/Git/usr/bin/tar.exe"
