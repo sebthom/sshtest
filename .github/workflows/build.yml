@@ -66,13 +66,17 @@ jobs:
 
         mkpasswd -l >/etc/passwd
         mkgroup -l >/etc/group
+        cat /etc/passwd
+        mkdir /home/${{ env.TEST_SSH_USER }}
+        cp -r /etc/skel/. /home/${{ env.TEST_SSH_USER }}
+        chown ${{ env.TEST_SSH_USER }}:${{ env.TEST_SSH_USER }} /home/${{ env.TEST_SSH_USER }}
 
         # test sshd config
         # psexec -accepteula -s "$(cygpath -w /usr/bin/sshd)" -t -ddd
 
         # launch sshd in background as SYSTEM but print messages to stdout/stderr
         #psexec -accepteula -s "$(cygpath -w /usr/bin/sshd)" -ddd &
-        /usr/bin/sshd -D -dd &
+        /usr/bin/sshd -D -ddd &
         sleep 5
 
         curl -fL -o klink.exe http://www.9bis.net/kitty/files/klink.exe
