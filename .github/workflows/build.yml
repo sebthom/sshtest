@@ -66,6 +66,7 @@ jobs:
         EOF
 
         psexec -accepteula -s "$PROGRAMFILES/OpenSSH-Win64/sshd" -ddd &
+        sleep 3
 
         curl -fL -o klink.exe http://www.9bis.net/kitty/files/klink.exe
         echo y | ./klink.exe ${{ env.TEST_SSH_USER }}@${{ env.TEST_SSH_HOST }} \
