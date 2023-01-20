@@ -50,7 +50,7 @@ jobs:
 
         /usr/bin/ssh-keygen -A # generate host keys
 
-        cat <<EOF > /etc/ssh/sshd_config
+        cat <<EOF tee /etc/ssh/sshd_config
         ListenAddress ${{ env.TEST_SSH_HOST }}
         Port ${{ env.TEST_SSH_PORT }}
         PermitRootLogin no
@@ -63,12 +63,9 @@ jobs:
             AuthorizedKeysFile $(pwd)/${{ env.TEST_SSH_PUB_FILE }}
         EOF
 
-        cat /etc/ssh/sshd_config
-
         # prevents setgid: Invalid argument
-        mkpasswd -l >/etc/passwd
-        mkgroup -l >/etc/group
-        cat /etc/passwd
+        mkpasswd -l | tee /etc/passwd
+        mkgroup -l | tee /etc/group
 
         # launch sshd in background as SYSTEM but print messages to stdout/stderr
         ./PsExec64 -accepteula -s "$(cygpath -w /usr/bin/sshd)" -ddd &
