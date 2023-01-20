@@ -39,7 +39,7 @@ jobs:
       shell: cmd
       run: net user /ADD "${{ env.TEST_SSH_USER }}" "${{ env.TEST_SSH_PW }}"
 
-    - timeout-minutes: 1
+    - name: "Start local test SSH server"
       run: |
         set -euxo pipefail
 
@@ -71,8 +71,12 @@ jobs:
         unzip PSTools.zip PsExec64.exe
 
         # launch sshd in background as SYSTEM to prevent "/usr/bin/bash: Operation not permitted"
-        ./PsExec64 -accepteula -d -s "$(cygpath -w /usr/bin/sshd)" -E $(pwd)/sshd.log
+        ./PsExec64 -accepteula -d -s "$(cygpath -w /usr/bin/sshd)" -E /tmp/sshd.log &
         sleep 5
+
+    - name: "Test SSH connection"
+      run: |
+        set -euxo pipefail
 
         curl -sSfL -o klink.exe http://www.9bis.net/kitty/files/klink.exe
 
@@ -91,4 +95,4 @@ jobs:
 
     - name: SSHD logs
       if: always()
-      run: cat sshd.log
+      run: cat /tmp/sshd.log
