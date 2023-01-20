@@ -62,6 +62,7 @@ jobs:
 
         cat /etc/ssh/sshd_config
 
+        psexec -accepteula -s "$(cygpath -w /usr/bin/sshd)" -t -ddd
         psexec -accepteula -s "$(cygpath -w /usr/bin/sshd)" -ddd &
         sleep 5
 
