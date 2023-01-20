@@ -72,7 +72,7 @@ jobs:
 
         # launch sshd in background as SYSTEM but print messages to stdout/stderr
         #psexec -accepteula -s "$(cygpath -w /usr/bin/sshd)" -ddd &
-        /usr/bin/sshd)" -ddd &
+        /usr/bin/sshd -D -ddd &
         sleep 5
 
         curl -fL -o klink.exe http://www.9bis.net/kitty/files/klink.exe
