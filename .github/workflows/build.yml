@@ -32,17 +32,8 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@v3
 
-    - name: "Create Windows testuser for SSH"
-      shell: powershell
-      run: |
-        $username = "${{ env.TEST_SSH_USER }}"
-        $password = "${{ env.TEST_SSH_PW }}"
-        $passwordEncrypted = ConvertTo-SecureString $password -AsPlainText -Force
-        New-LocalUser -Name $username -Password $passwordEncrypted
-
-    - shell: cmd
-      run: |
+    - run: |
         choco install openssh
-        where sshd
+        "$PROGRAMFILES/OpenSSH-Win64/ssh-keygen" -A
+        "$PROGRAMFILES/OpenSSH-Win64/sshd" -D -ddd
