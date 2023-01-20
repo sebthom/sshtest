@@ -44,6 +44,8 @@ jobs:
         net /ADD localgroup administrators "${{ env.TEST_SSH_USER }}"
         echo -------------------------------
         net user "${{ env.TEST_SSH_USER }}"
+        echo -------------------------------
+        runas "/user:${{ env.TEST_SSH_USER }}" whoami
 
     #- run: choco install psexec --no-progress
 
