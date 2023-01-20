@@ -43,13 +43,9 @@ jobs:
       run: |
         set -euxo pipefail
 
-        # install PsExec to run sshd as SYSTEM without having to configure it as a system service
-        curl -sSfL -o PSTools.zip http://download.sysinternals.com/files/PSTools.zip
-        unzip PSTools.zip PsExec64.exe
-
         chmod 400 $(pwd)/test/*
 
-        /usr/bin/ssh-keygen -A # generate host keys
+        /usr/bin/ssh-keygen -A # generate host keys for sshd
 
         cat <<EOF | tee /etc/ssh/sshd_config
         ListenAddress ${{ env.TEST_SSH_HOST }}
@@ -68,9 +64,12 @@ jobs:
         mkpasswd -l | tee /etc/passwd
         mkgroup -l > /etc/group
 
-        # launch sshd in background as SYSTEM but print messages to stdout/stderr
-        #./PsExec64 -accepteula -s "$(cygpath -w /usr/bin/sshd)" -ddd &
-        /usr/bin/sshd -ddd &
+        # install PsExec to run sshd as SYSTEM without having to configure it as a system service
+        curl -sSfL -o PSTools.zip http://download.sysinternals.com/files/PSTools.zip
+        unzip PSTools.zip PsExec64.exe
+
+        # launch sshd in background as SYSTEM to prevent "/usr/bin/bash: Operation not permitted"
+        ./PsExec64 -accepteula -s "$(cygpath -w /usr/bin/sshd)" -ddd &
         sleep 5
 
         curl -sSfL -o klink.exe http://www.9bis.net/kitty/files/klink.exe
