@@ -46,9 +46,13 @@ jobs:
 
         chmod 400 $(pwd)/test/*
 
+        # prevents setgid: Invalid argument
+        mkpasswd -l | tee /etc/passwd
+        mkgroup -l > /etc/group
+
         /usr/bin/ssh-keygen -A # generate host keys for sshd
 
-        cat <<EOF | tee /etc/ssh/sshd_config
+        cat <<EOF > tee /etc/ssh/sshd_config
         ListenAddress ${{ env.TEST_SSH_HOST }}
         Port ${{ env.TEST_SSH_PORT }}
         PermitRootLogin no
@@ -57,24 +61,29 @@ jobs:
         IgnoreUserKnownHosts yes
         PasswordAuthentication yes
         PermitEmptyPasswords no
+        LogLevel DEBUG3
         match User ${{ env.TEST_SSH_USER }}
             AuthorizedKeysFile $(pwd)/${{ env.TEST_SSH_PUB_FILE }}
         EOF
-
-        # prevents setgid: Invalid argument
-        mkpasswd -l | tee /etc/passwd
-        mkgroup -l > /etc/group
+        /usr/bin/sshd -T # test config
 
         # install PsExec to run sshd as SYSTEM without having to configure it as a system service
         curl -sSfL -o PSTools.zip http://download.sysinternals.com/files/PSTools.zip
         unzip PSTools.zip PsExec64.exe
 
         # launch sshd in background as SYSTEM to prevent "/usr/bin/bash: Operation not permitted"
-        ./PsExec64 -accepteula -s "$(cygpath -w /usr/bin/sshd)" -ddd &
+        ./PsExec64 -accepteula -s "$(cygpath -w /usr/bin/sshd)" -e
         sleep 5
 
         curl -sSfL -o klink.exe http://www.9bis.net/kitty/files/klink.exe
-        #-pw ${{ env.TEST_SSH_PW }} \
+
+        echo y | ./klink.exe -auto-store-sshkey \
+          -P ${{ env.TEST_SSH_PORT }} \
+          -pw ${{ env.TEST_SSH_PW }} \
+          -i ${{ env.TEST_SSH_KEY_PPK }} \
+          ${{ env.TEST_SSH_USER }}@${{ env.TEST_SSH_HOST }} \
+          "whoami"
+
         echo y | ./klink.exe -auto-store-sshkey \
           -P ${{ env.TEST_SSH_PORT }} \
           -i ${{ env.TEST_SSH_KEY_PPK }} \
