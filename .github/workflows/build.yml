@@ -64,6 +64,9 @@ jobs:
 
         cat /etc/ssh/sshd_config
 
+        mkpasswd -ld >/etc/passwd
+        mkgroup -ld >/etc/group
+
         # test sshd config
         psexec -accepteula -s "$(cygpath -w /usr/bin/sshd)" -t -ddd
         
