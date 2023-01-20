@@ -40,7 +40,9 @@ jobs:
 
     - run: choco install psexec --no-progress
 
-    - run: |
+    - env:
+        SHELLOPTS: "igncr"
+      run: |
         set -eux
 
         chmod 400 $(pwd)/test/*
