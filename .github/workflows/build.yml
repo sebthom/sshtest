@@ -52,7 +52,7 @@ jobs:
 
         /usr/bin/ssh-keygen -A # generate host keys for sshd
 
-        cat <<EOF > tee /etc/ssh/sshd_config
+        cat <<EOF > /etc/ssh/sshd_config
         ListenAddress ${{ env.TEST_SSH_HOST }}
         Port ${{ env.TEST_SSH_PORT }}
         PermitRootLogin no
