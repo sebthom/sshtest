@@ -69,5 +69,5 @@ jobs:
         ./klink.exe ${{ env.TEST_SSH_USER }}@${{ env.TEST_SSH_HOST }} \
           -auto-store-sshkey \
           -pw ${{ env.TEST_SSH_PW }} \
-          -p ${{ env.TEST_SSH_PORT }} \
+          -P ${{ env.TEST_SSH_PORT }} \
           "whoami"
