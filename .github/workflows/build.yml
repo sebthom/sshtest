@@ -36,23 +36,15 @@ jobs:
 
     - name: "Create Windows testuser for SSH"
       shell: cmd
-      run: |
-        net user "%USERNAME%"
-        echo -------------------------------
-        net user /ADD "${{ env.TEST_SSH_USER }}" "${{ env.TEST_SSH_PW }}"
-        echo -------------------------------
-        net /ADD localgroup administrators "${{ env.TEST_SSH_USER }}"
-        echo -------------------------------
-        net user "${{ env.TEST_SSH_USER }}"
-        echo -------------------------------
-        runas "/user:${{ env.TEST_SSH_USER }}" whoami
-
-    #- run: choco install psexec --no-progress
+      run: net user /ADD "${{ env.TEST_SSH_USER }}" "${{ env.TEST_SSH_PW }}"
 
     - env:
         SHELLOPTS: "igncr"
       run: |
         set -euxo pipefail
+
+        curl -o PSTools.zip http://download.sysinternals.com/files/PSTools.zip
+        unzip PSTools.zip PsExec64.exe
 
         chmod 400 $(pwd)/test/*
 
@@ -73,16 +65,12 @@ jobs:
 
         cat /etc/ssh/sshd_config
 
-        mkpasswd -l >/etc/passwd
-        mkgroup -l >/etc/group
-        cat /etc/passwd
-
-        # test sshd config
-        # psexec -accepteula -s "$(cygpath -w /usr/bin/sshd)" -t -ddd
+        #mkpasswd -l >/etc/passwd
+        #mkgroup -l >/etc/group
+        #cat /etc/passwd
 
         # launch sshd in background as SYSTEM but print messages to stdout/stderr
-        #psexec -accepteula -s "$(cygpath -w /usr/bin/sshd)" -ddd &
-        /usr/bin/sshd -D -ddd &
+        ./PsExec64 -accepteula -s "$(cygpath -w /usr/bin/sshd)" -ddd &
         sleep 5
 
         curl -fL -o klink.exe http://www.9bis.net/kitty/files/klink.exe
