@@ -67,7 +67,7 @@ jobs:
         mkpasswd -l >/etc/passwd
         mkgroup -l >/etc/group
         cat /etc/passwd
-        mkdir /home/${{ env.TEST_SSH_USER }}
+        mkdir -p /home/${{ env.TEST_SSH_USER }}
         cp -r /etc/skel/. /home/${{ env.TEST_SSH_USER }}
         chown ${{ env.TEST_SSH_USER }}:${{ env.TEST_SSH_USER }} /home/${{ env.TEST_SSH_USER }}
 
