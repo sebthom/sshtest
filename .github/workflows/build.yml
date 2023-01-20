@@ -49,7 +49,7 @@ jobs:
 
         chmod 400 $(pwd)/test/*
         #powershell -ExecutionPolicy Bypass -File $PROGRAMFILES/OpenSSH-Win64/install-sshd.ps1
-        "$PROGRAMFILES/OpenSSH-Win64/ssh-keygen" -A # generate host keys
+        psexec -accepteula -s "$PROGRAMFILES/OpenSSH-Win64/ssh-keygen" -A # generate host keys
         #powershell -ExecutionPolicy Bypass -Command '. .\FixHostFilePermissions.ps1 -Confirm:$false'
 
         cat <<EOF > $ProgramData/ssh/sshd_config
