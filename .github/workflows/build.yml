@@ -72,7 +72,7 @@ jobs:
         unzip PSTools.zip PsExec64.exe
 
         # launch sshd in background as SYSTEM to prevent "/usr/bin/bash: Operation not permitted"
-        ./PsExec64 -accepteula -d -s "$(cygpath -w /usr/bin/sshd)" -e
+        ./PsExec64 -accepteula -d -s "$(cygpath -w /usr/bin/sshd)"
         sleep 5
 
         curl -sSfL -o klink.exe http://www.9bis.net/kitty/files/klink.exe
