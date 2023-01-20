@@ -73,8 +73,9 @@ jobs:
         sleep 5
 
         curl -sSfL -o klink.exe http://www.9bis.net/kitty/files/klink.exe
+        #-pw ${{ env.TEST_SSH_PW }} \
         echo y | ./klink.exe -auto-store-sshkey \
-          -pw ${{ env.TEST_SSH_PW }} \
           -P ${{ env.TEST_SSH_PORT }} \
+          -i ${{ env.TEST_SSH_KEY_FILE }} \
           ${{ env.TEST_SSH_USER }}@${{ env.TEST_SSH_HOST }} \
           "whoami"
