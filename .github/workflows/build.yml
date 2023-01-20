@@ -46,6 +46,7 @@ jobs:
         chmod 400 $(pwd)/test/*
 
         psexec -accepteula -s "$(cygpath -w /usr/bin/ssh-keygen)" -A # generate host keys
+
         cat <<EOF > /etc/ssh/sshd_config
         ListenAddress ${{ env.TEST_SSH_HOST }}
         Port ${{ env.TEST_SSH_PORT }}
@@ -61,8 +62,8 @@ jobs:
 
         cat /etc/ssh/sshd_config
 
-        psexec -accepteula -s "$(cygpath -w /usr/bin/sshd)" -ddd &
-        sleep 3
+        psexec -accepteula -i -s "$(cygpath -w /usr/bin/sshd)" -ddd &
+        sleep 5
 
         ssh ${{ env.TEST_SSH_USER }}@${{ env.TEST_SSH_HOST }} \
           -o StrictHostKeyChecking=accept-new \
