@@ -42,6 +42,7 @@ jobs:
         $passwordEncrypted = ConvertTo-SecureString $password -AsPlainText -Force
         New-LocalUser -Name $username -Password $passwordEncrypted
 
-    - run: |
-        set -eux
-        winget install "openssh beta"
+    - shell: cmd
+      run: |
+        choco install openssh
+        where sshd
