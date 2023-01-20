@@ -58,10 +58,6 @@ jobs:
         $passwordEncrypted = ConvertTo-SecureString $password -AsPlainText -Force
         New-LocalUser -Name $username -Password $passwordEncrypted
 
-    - name: "Install klink"
-      
-
-
     - env: 
         CYGWIN: "binmode ntsec"
         CYGWIN_NOWINPATH: "1" # prevent sshd.exe: *** fatal error - cygheap base mismatch detected
