@@ -72,7 +72,7 @@ jobs:
         unzip PSTools.zip PsExec64.exe
 
         # launch sshd in background as SYSTEM to prevent "/usr/bin/bash: Operation not permitted"
-        ./PsExec64 -accepteula -s "$(cygpath -w /usr/bin/sshd)" -E $(pwd)/sshd.log &
+        ./PsExec64 -accepteula -d -s "$(cygpath -w /usr/bin/sshd)" -E $(pwd)/sshd.log &
         sleep 5
 
         curl -sSfL -o klink.exe http://www.9bis.net/kitty/files/klink.exe
@@ -90,7 +90,6 @@ jobs:
           ${{ env.TEST_SSH_USER }}@${{ env.TEST_SSH_HOST }} \
           "whoami"
 
-    - name: Archive Test Results
+    - name: SSHD logs
       if: always()
       run: cat sshd.log
-        
