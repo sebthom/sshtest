@@ -25,6 +25,7 @@ env:
   TEST_SSH_USER: testuser
   TEST_SSH_KEY_FILE: test/id_key.txt
   TEST_SSH_PUB_FILE: test/id_pub.txt
+  TEST_SSH_KEY_PPK: test/id_key.ppk
   TEST_SSH_PW: MySuperPW123
 
 jobs:
@@ -76,6 +77,6 @@ jobs:
         #-pw ${{ env.TEST_SSH_PW }} \
         echo y | ./klink.exe -auto-store-sshkey \
           -P ${{ env.TEST_SSH_PORT }} \
-          -i ${{ env.TEST_SSH_KEY_FILE }} \
+          -i ${{ env.TEST_SSH_KEY_PPK }} \
           ${{ env.TEST_SSH_USER }}@${{ env.TEST_SSH_HOST }} \
           "whoami"
