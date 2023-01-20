@@ -65,9 +65,10 @@ jobs:
 
         cat /etc/ssh/sshd_config
 
-        #mkpasswd -l >/etc/passwd
-        #mkgroup -l >/etc/group
-        #cat /etc/passwd
+        # prevents setgid: Invalid argument
+        mkpasswd -l >/etc/passwd
+        mkgroup -l >/etc/group
+        cat /etc/passwd
 
         # launch sshd in background as SYSTEM but print messages to stdout/stderr
         ./PsExec64 -accepteula -s "$(cygpath -w /usr/bin/sshd)" -ddd &
