@@ -37,13 +37,13 @@ jobs:
     - name: "Create Windows testuser for SSH"
       shell: cmd
       run: |
-        whoami /groups
+        net user "%USERNAME%"
         echo -------------------------------
         net user /ADD "${{ env.TEST_SSH_USER }}" "${{ env.TEST_SSH_PW }}"
         echo -------------------------------
         net /ADD localgroup administrators "${{ env.TEST_SSH_USER }}"
         echo -------------------------------
-        net user
+        net user "${{ env.TEST_SSH_USER }}"
 
     #- run: choco install psexec --no-progress
 
