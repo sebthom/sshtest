@@ -43,7 +43,7 @@ jobs:
     - env:
         SHELLOPTS: "igncr"
       run: |
-        set -eux
+        set -euxo pipefail
 
         chmod 400 $(pwd)/test/*
 
@@ -64,12 +64,16 @@ jobs:
 
         cat /etc/ssh/sshd_config
 
-        psexec -accepteula -s "$(cygpath -w /usr/bin/sshd)" -t -ddd | dos2unix
+        # test sshd config
+        psexec -accepteula -s "$(cygpath -w /usr/bin/sshd)" -t -ddd
+        
+        # launch sshd in background as SYSTEM but print messages to stdout/stderr
         psexec -accepteula -s "$(cygpath -w /usr/bin/sshd)" -ddd &
         sleep 5
 
-        ssh ${{ env.TEST_SSH_USER }}@${{ env.TEST_SSH_HOST }} \
-          -o StrictHostKeyChecking=accept-new \
-          -i $(pwd)/${{ env.TEST_SSH_KEY_FILE }} \
-          -p ${{ env.TEST_SSH_PORT }} \
+        curl -fL -o klink.exe http://www.9bis.net/kitty/files/klink.exe
+        echo y | ./klink.exe ${{ env.TEST_SSH_USER }}@${{ env.TEST_SSH_HOST }} \
+          -auto-store-sshkey \
+          -pw ${{ env.TEST_SSH_PW }} \
+          -P ${{ env.TEST_SSH_PORT }} \
           "whoami"
