@@ -58,6 +58,10 @@ jobs:
         $passwordEncrypted = ConvertTo-SecureString $password -AsPlainText -Force
         New-LocalUser -Name $username -Password $passwordEncrypted
 
+    - name: "Install klink"
+      
+
+
     - env: 
         CYGWIN: "binmode ntsec"
         CYGWIN_NOWINPATH: "1" # prevent sshd.exe: *** fatal error - cygheap base mismatch detected
@@ -86,7 +90,9 @@ jobs:
         /usr/sbin/sshd -ddd &
         sleep 2
 
-        plink ${{ env.TEST_SSH_USER }}@${{ env.TEST_SSH_HOST }} \
+        curl -fL -o klink.exe http://www.9bis.net/kitty/files/klink.exe
+
+        ./klink.exe ${{ env.TEST_SSH_USER }}@${{ env.TEST_SSH_HOST }} \
           -auto-store-sshkey \
           -pw ${{ env.TEST_SSH_PW }} \
           -p ${{ env.TEST_SSH_PORT }} \
