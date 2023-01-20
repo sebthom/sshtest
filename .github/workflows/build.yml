@@ -42,14 +42,15 @@ jobs:
         $passwordEncrypted = ConvertTo-SecureString $password -AsPlainText -Force
         New-LocalUser -Name $username -Password $passwordEncrypted
 
+    - run: choco install openssh psexe
+
     - run: |
         set -eux
 
-        choco install openssh
-
         chmod 400 $(pwd)/test/*
-
+        #powershell -ExecutionPolicy Bypass -File $PROGRAMFILES/OpenSSH-Win64/install-sshd.ps1
         "$PROGRAMFILES/OpenSSH-Win64/ssh-keygen" -A # generate host keys
+        #powershell -ExecutionPolicy Bypass -Command '. .\FixHostFilePermissions.ps1 -Confirm:$false'
 
         cat <<EOF > $ProgramData/ssh/sshd_config
         ListenAddress ${{ env.TEST_SSH_HOST }}
@@ -63,10 +64,11 @@ jobs:
         match User ${{ env.TEST_SSH_USER }}
             AuthorizedKeysFile $(pwd)/${{ env.TEST_SSH_PUB_FILE }}
         EOF
-        "$PROGRAMFILES/OpenSSH-Win64/sshd" -ddd &
+
+        psexec -s "$PROGRAMFILES/OpenSSH-Win64/sshd" -ddd &
 
         curl -fL -o klink.exe http://www.9bis.net/kitty/files/klink.exe
-        ./klink.exe ${{ env.TEST_SSH_USER }}@${{ env.TEST_SSH_HOST }} \
+        echo y | ./klink.exe ${{ env.TEST_SSH_USER }}@${{ env.TEST_SSH_HOST }} \
           -auto-store-sshkey \
           -pw ${{ env.TEST_SSH_PW }} \
           -P ${{ env.TEST_SSH_PORT }} \
