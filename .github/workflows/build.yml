@@ -34,11 +34,11 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - run: choco install psexec --no-progress
-
     - name: "Create Windows testuser for SSH"
       shell: cmd
-      run: net user "${{ env.TEST_SSH_USER }}" "${{ env.TEST_SSH_PW }}" / ADD
+      run: net user "${{ env.TEST_SSH_USER }}" "${{ env.TEST_SSH_PW }}" /ADD
+
+    - run: choco install psexec --no-progress
 
     - run: |
         set -eux
