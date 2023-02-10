@@ -19,80 +19,23 @@ defaults:
   run:
     shell: bash
 
-env:
-  TEST_SSH_HOST: 127.0.0.1
-  TEST_SSH_PORT: 2222
-  TEST_SSH_USER: testuser
-  TEST_SSH_KEY_FILE: test/id_key.txt
-  TEST_SSH_PUB_FILE: test/id_pub.txt
-  TEST_SSH_KEY_PPK: test/id_key.ppk
-  TEST_SSH_PW: MySuperPW123
-
 jobs:
   build:
-    runs-on: windows-latest
-
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: 
+        - ubuntu-latest
+        - windows-latest
     steps:
-    - uses: actions/checkout@v3
+    - name: "Install: Haxe ${{ matrix.haxe }}"
+      uses: krdlab/setup-haxe@v1 # https://github.com/krdlab/setup-haxe
+      with:
+        haxe-version: latest
 
-    - name: "Create Windows testuser for SSH"
-      shell: cmd
-      run: net user /ADD "${{ env.TEST_SSH_USER }}" "${{ env.TEST_SSH_PW }}"
-
-    - name: "Start local test SSH server"
-      run: |
-        set -euxo pipefail
-
-        chmod 400 $(pwd)/test/*
-
-        # prevents setgid: Invalid argument
-        mkpasswd -l | tee /etc/passwd
-        mkgroup -l > /etc/group
-
-        /usr/bin/ssh-keygen -A # generate host keys for sshd
-
-        cat <<EOF > /etc/ssh/sshd_config
-        ListenAddress ${{ env.TEST_SSH_HOST }}
-        Port ${{ env.TEST_SSH_PORT }}
-        PermitRootLogin no
-        StrictModes no
-        PubkeyAuthentication yes
-        IgnoreUserKnownHosts yes
-        PasswordAuthentication yes
-        PermitEmptyPasswords no
-        LogLevel DEBUG3
-        match User ${{ env.TEST_SSH_USER }}
-            AuthorizedKeysFile $(pwd)/${{ env.TEST_SSH_PUB_FILE }}
-        EOF
-        /usr/bin/sshd -T # test config
-
-        # install PsExec to run sshd as SYSTEM without having to configure it as a system service
-        curl -sSfL -o PSTools.zip http://download.sysinternals.com/files/PSTools.zip
-        unzip PSTools.zip PsExec64.exe
-
-        # launch sshd in background as SYSTEM to prevent "/usr/bin/bash: Operation not permitted"
-        ./PsExec64 -accepteula -d -s "$(cygpath -w /usr/bin/sshd)" -E /tmp/sshd.log &
-        sleep 5
-
-    - name: "Test SSH connection"
-      run: |
-        set -euxo pipefail
-
-        curl -sSfL -o klink.exe http://www.9bis.net/kitty/files/klink.exe
-
-        echo y | ./klink.exe -auto-store-sshkey \
-          -P ${{ env.TEST_SSH_PORT }} \
-          -pw ${{ env.TEST_SSH_PW }} \
-          -i ${{ env.TEST_SSH_KEY_PPK }} \
-          ${{ env.TEST_SSH_USER }}@${{ env.TEST_SSH_HOST }} \
-          "whoami"
-
-        echo y | ./klink.exe -auto-store-sshkey \
-          -P ${{ env.TEST_SSH_PORT }} \
-          -i ${{ env.TEST_SSH_KEY_PPK }} \
-          ${{ env.TEST_SSH_USER }}@${{ env.TEST_SSH_HOST }} \
-          "whoami"
-
-    - name: SSHD logs
-      if: always()
-      run: cat /tmp/sshd.log
+    - name: "Install: Haxe ${{ matrix.haxe }}"
+      uses: krdlab/setup-haxe@v1 # https://github.com/krdlab/setup-haxe
+      with:
+        haxe-version: latest
+        
